@@ -30,14 +30,12 @@ export default function LoginForm(props) {
         {
         if(result.payload.responseCode == SUCCESS_CODE)
         {
-            console.log('here at success');
             props.history.push('./home');
         }else if(result.payload.responseCode !== SUCCESS_CODE && result.payload[PAYLOAD].ResponseErrors != null){
             setErrors(result.payload[PAYLOAD].ResponseErrors);
             toggleLoading(false);
             toggleButton(false);
         }else{
-            console.log('here at else')
            setErrors([DEFAULT_ERROR]);
            toggleLoading(false);
             toggleButton(false);

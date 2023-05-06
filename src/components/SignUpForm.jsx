@@ -53,7 +53,7 @@ class SignUpForm extends React.Component {
 
             if (res && res == SUCCESS) {
                 //redirect user to sign in portal
-                await this.props.history.push('./');
+                await window.location.reload();
 
             } else if (res && typeof(res) == "object") {
                 //Return API error to UI
