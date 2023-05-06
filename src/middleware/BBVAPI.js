@@ -41,14 +41,6 @@ import { setCredentials } from '../app/features/AuthSlice';
                 
                 resAction.responseCode = SUCCESS_CODE;
                 resAction.payload = result;
-                
-                /*
-                //Set JWT cookie in browser cookie storage
-                cookies.set('token', (result["Token"]));
-                //Set Refresh cookie in browser cookie storage
-                cookies.set('refreshToken', result['RefreshToken']);
-                cookies.set('user', result['User']);
-*/
 
                 //Redirect to app dashboard
                 return resAction;
