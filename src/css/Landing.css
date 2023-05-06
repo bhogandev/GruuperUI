@@ -1,0 +1,44 @@
+.landing-container {
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+  }
+  
+  .landing-header {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  
+  .landing-logo {
+    margin-right: 10px;
+  }
+  
+  .landing-title {
+    display: inline-block;
+  }
+  
+  .landing-content {
+    height: 100%;
+    margin-top: 50px;
+  }
+  
+  .landing-carousel {
+    height: 100%;
+  }
+  
+  .landing-form {
+    height: 100%;
+    padding: 20px;
+  }
+  
+  .landing-form-header {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .landing-form-toggle {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
