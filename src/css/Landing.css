@@ -1,17 +1,45 @@
+*{
+    margin-right: 0;
+    padding: 0;
+}
+
 .landing-container {
     height: 100vh;
     width: 100vw;
     position: relative;
+    background-color: #fff;
+    overflow-x: hidden;
   }
   
   .landing-header {
     position: absolute;
     top: 0;
-    right: 0;
+    right: 0; /* replace 100px with the actual width of your header element */
+  }
+  
+
+  .landing-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 50px;
+  }
+  
+  .landing-logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    background-color: #fff;
+    border-radius: 50%;
+    margin-right: 20px;
   }
   
   .landing-logo {
     margin-right: 10px;
+    height:100px;
+    width: 100px;
   }
   
   .landing-title {
@@ -19,19 +47,30 @@
   }
   
   .landing-content {
-    height: 100%;
-    margin-top: 50px;
-  }
-  
-  .landing-carousel {
-    height: 100%;
+    height: calc(100% - 50px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   
   .landing-form {
-    height: 100%;
+    width: 100%;
+    max-width: 500px;
     padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
   
+  .landing-form:hover {
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+  }
+
   .landing-form-header {
     margin-bottom: 20px;
     text-align: center;
@@ -41,4 +80,10 @@
     margin-top: 20px;
     text-align: center;
   }
+  
+  .landing-footer {
+    text-align: center;
+  }
+  
+
   
