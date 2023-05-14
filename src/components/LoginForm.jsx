@@ -57,45 +57,62 @@ export default function LoginForm(props) {
         } 
    }
 
-    function renderForm()
-    {
-        if(loading)
-        {
-            return (
-                <Spinner />
-            )
-        } else {
-            return (
-                <div>
-                    <Form>
-                        <FormGroup>
-                            <div id="errors" style={{ color: "red" }}>
-                            </div>
-                            <Label for="email">Email</Label>
-                            <Input type="email" name="email" id="email" placeholder="Email" value={email} onChange={event => setEmail(event.target.value)}/>
-                        </FormGroup>
-                        <FormGroup>
-                            <Label for="password">Password</Label>
-                            <Input type="password" name="password" id="password" placeholder="Password" value={password} onChange={event => setPassword(event.target.value)}/>
-                        </FormGroup>
-                        <FormGroup check>
-                            <Label check>
-                                <Input type="checkbox" onChange={event => {
-                                    if (event.target.checked) {
-                                        localStorage.setItem('rememberedEmail', email);
-                                    } else {
-                                        localStorage.removeItem('rememberedEmail');
-                                    }
-                                }}/>{' '}
-                                Remember me
-                            </Label>
-                        </FormGroup>
-                        <Button style={{ textAlign: "center" }} disabled={btnDisabled} onClick={() => Login()}>Log In</Button>
-                    </Form>
-                </div>
-            )
-        }
+   function renderForm() {
+    if (loading) {
+      return (
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <Spinner />
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <Form>
+            <FormGroup>
+              <div id="errors">
+                {errors.map((x) => x["Description"]).join(", ")}
+              </div>
+              <Label for="email">Email</Label>
+              <Input
+                type="email"
+                name="email"
+                id="email"
+                placeholder="Email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label for="password">Password</Label>
+              <Input
+                type="password"
+                name="password"
+                id="password"
+                placeholder="Password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+              />
+            </FormGroup>
+            <div className="form-group text-center">
+              <FormGroup check>
+                <Label check>
+                  <Input type="checkbox" /> Remember me
+                </Label>
+              </FormGroup>
+              <Button
+                className="btn-lg btn-primary btn-block mt-3"
+                onClick={Login}
+                disabled={btnDisabled}
+              >
+                Log in
+              </Button>
+            </div>
+          </Form>
+        </div>
+      );
     }
+  }
+  
 
     useEffect(() => {
         if(isInitialMount.current)
