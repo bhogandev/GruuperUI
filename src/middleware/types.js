@@ -12,17 +12,21 @@ export const RESPONSE_ERRORS = "responseErrors";
 export const USERNAME_KEY = "Username";
 
 //GRUUP CHAT CONNECTION EVENTS
-export const CONNECTION_ESTABLISHED = "Connected!";
-export const CONNECTION_FAILED = "Connection failed: ";
-export const RETRIEVE_USER_GROUPS = "RetrieveUserGroups";
-export const RECEIVE_CONNECTION_ID = "RecieveConnID";
-export const INVITE_USER_SUCCESSFUL = "InviteUserSuccessful";
-export const INVITE_TO_GROUP = "InviteToGroup";
-export const RETURN_EXCEPTION = "ReturnException";
-export const RECEIVE_MESSAGE = "ReceiveMessage";
-export const SEND_PRIVATE_MESSAGE = "SendPrivateMessage";
-export const SEND_CHAT_MESSAGE = "SendMessage"; 
-export const CONNECTION_IDLE = "No connection to server yet.";
+export const GruupChatTypes = {
+    CONNECTION_ESTABLISHED: "Connected!",
+    CONNECTION_FAILED: "Connection failed: ",
+    RETRIEVE_USER_GROUPS: "RetrieveUserGroups",
+    RECEIVE_CONNECTION_ID: "RecieveConnID",
+    INVITE_USER_SUCCESSFUL: "InviteUserSuccessful",
+    INVITE_TO_GROUP: "InviteToGroup",
+    RETURN_EXCEPTION: "ReturnException",
+    RECEIVE_MESSAGE: "ReceiveMessage",
+    SEND_PRIVATE_MESSAGE: "SendPrivateMessage",
+    SEND_CHAT_MESSAGE: "SendMessage",
+    CONNECTION_IDLE: "No connection to server yet.",
+    CONNECTION_ID: "ConnectionId"
+  };
+  
 
 //REDUX REDUCER KEYS
 export const PAYLOAD = "payload"; 
