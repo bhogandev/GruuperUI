@@ -10,7 +10,7 @@ const ChatInvite = (props) => {
 
         if (isInviteUserProvided) {
             var groupMem = [];
-            props.sendInvite(groupMem, inviteUser);
+            props.inviteUser(groupMem, inviteUser);
         } 
         else {
             alert('Please select a recipent and a message.');

@@ -60,7 +60,6 @@ export default function Home(props) {
 
     return (
         <div>
-        <AppNav navBG="light" userName={userName} profile={profile ? profile : PROFILE_DEFUALT}/>
         <Container fluid>
             <Row>
                 <Col lg={3}>
@@ -80,3 +79,5 @@ export default function Home(props) {
             </div>
         )
 }; 
+
+  

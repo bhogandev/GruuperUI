@@ -1,167 +1,192 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-
+import { HubConnectionBuilder } from '@microsoft/signalr';
+import Cookies from 'universal-cookie';
 import ChatBox from '../components/ChatBox';
 import ChatInput from '../components/ChatInput';
-import Cookies from 'universal-cookie';
 import ChatInvite from '../components/ChatInvite';
-import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, CONNECTION_ID, CONNECTION_IDLE, GROUP_MODIFICATION_TYPES, INVITE_TO_GROUP, INVITE_USER_SUCCESSFUL, RECEIVE_CONNECTION_ID, RECEIVE_MESSAGE, RETRIEVE_USER_GROUPS, RETURN_EXCEPTION, SEND_CHAT_MESSAGE, SEND_PRIVATE_MESSAGE, TOKEN } from '../middleware/types';
-import { APIBASE } from '../middleware/Constants';
+import { GruupChatTypes as TYPES } from '../middleware/types';
+import { CHATBASE as API_BASE_URL } from '../middleware/Constants';
+import '../css/GruupChat.css';
+import { group } from '../middleware/IconsStore';
 
 const Chat = () => {
-    const [ connection, setConnection ] = useState(null);
-    const [ chat, setChat ] = useState([]);
-    const latestChat = useRef(null);
+  const [connection, setConnection] = useState(null);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [recipients, setRecipients] = useState([]);
+  const [selectedConversation, setSelectedConversation] = useState(null);
+  const [currGroup, setCurrGroup] = useState('');
 
-    var cookie = new Cookies();
+  const latestChatMessages = useRef([]);
 
-    const hubURL = APIBASE + "gruupmessenger";
+  const cookies = new Cookies();
 
-    latestChat.current = chat;
+  const hubUrl = API_BASE_URL + 'gruupmessenger';
 
-    useEffect(() => {
-        const newConnection = new HubConnectionBuilder()
-            .withUrl(hubURL, {
-            })
-            .withAutomaticReconnect()
-            .build();
+  latestChatMessages.current = chatMessages;
 
-        setConnection(newConnection);
-    }, []);
+  useEffect(() => {
+    const newConnection = new HubConnectionBuilder()
+      .withUrl(hubUrl)
+      .withAutomaticReconnect()
+      .build();
 
-    useEffect(() => {
-        if (connection) {
-            connection.start()
-                .then(result => {
-                    console.log(CONNECTION_ESTABLISHED);
+    setConnection(newConnection);
+  }, [hubUrl]);
 
-                    connection.on(RECEIVE_CONNECTION_ID, (conID) => {
-                        cookie.set(CONNECTION_ID, conID);
-                        connection.invoke(RETRIEVE_USER_GROUPS, retrieveGroups(cookie.get(CONNECTION_ID), '', cookie.get(TOKEN)))
-                    })
+  useEffect(() => {
+    if (!connection) return;
 
-                    connection.on(RETRIEVE_USER_GROUPS, (groups) => {
-                        console.log(groups);
-                        const userGroups = groups.map( group => {
-                            localStorage.setItem(group.groupName, group.groupUID)
-                        });
-                    })
+    async function startConnection() {
+      try {
+        if (connection.state === 'Disconnected') {
+          await connection.start({ withCredentials: false });
+          console.log(TYPES.CONNECTION_ESTABLISHED);
 
-                    connection.on(INVITE_USER_SUCCESSFUL, msg => {
-                        alert(msg);
-                    })
+          connection.on(TYPES.RECEIVE_CONNECTION_ID, (connectionId) => {
+            cookies.set(TYPES.CONNECTION_ID, connectionId);
+            const groupRequestPayload = {
+              conId: connectionId,
+              userName: '',
+              token: cookies.get('token'),
+            };
+            connection.invoke(
+              TYPES.RETRIEVE_USER_GROUPS,
+              JSON.stringify(groupRequestPayload)
+            );
+          });
 
-                    connection.on(RETURN_EXCEPTION, exception => {
-                        alert(exception);
-                    })
+          connection.on(TYPES.RETRIEVE_USER_GROUPS, (groups) => {
+            groups.forEach((group) => {
+              localStorage.setItem(group.groupName, JSON.stringify(group));
+            });
+          });
 
-                    connection.on(RECEIVE_MESSAGE, message => {
-                        const updatedChat = [...latestChat.current];
-                        updatedChat.push(JSON.parse(message));
-                        
-                        setChat(updatedChat);
-                    });
-                })
-                .catch(e => console.log(CONNECTION_FAILED, e));
+          connection.on(TYPES.INVITE_USER_SUCCESSFUL, (message) => {
+            console.log(message);
+          });
+
+          connection.on(TYPES.RETURN_EXCEPTION, (exception) => {
+            console.log(exception);
+          });
+
+          connection.on(TYPES.RECEIVE_MESSAGE, (message) => {
+            const updatedChatMessages = [...latestChatMessages.current];
+            updatedChatMessages.push(JSON.parse(message));
+            setChatMessages(updatedChatMessages);
+          });
         }
-    }, [connection]);
-
-    function retrieveGroups (conID, userName, token){
-        const uCallPayload = {
-            conID: conID,
-            userName: userName,
-            token: token
-        }
-
-        return JSON.stringify(uCallPayload);
+      } catch (e) {
+        console.error(TYPES.CONNECTION_FAILED, e.message);
+      }
     }
 
-    async function sendNewMessage(groupId, message, recipients)
-    {  
-        const msg = {
-            MessageId: '',
-            Username: '',
-            Body: message,
-            Recipient: '',
-            IsDeleted: false,
-            GroupRecipients: recipients      
-        }
+    startConnection();
 
-        const ClientMessage = {
-            conId: cookie.get(CONNECTION_ID),
-            token: cookie.get(TOKEN),
-            groupId: groupId,
-            Message: msg
-        }
+    return () => {
+      if (connection && connection.state !== 'Disconnected') {
 
-        var composedMsg = JSON.stringify(ClientMessage);
+      } else {
+        console.log(connection);
+      }
+    };
+  }, [connection, cookies, hubUrl]);
 
-        if (connection.connectionStarted) {
-            try {
-                await connection.send(SEND_PRIVATE_MESSAGE, composedMsg);
-            }
-            catch(e) {
-                console.log(e);
-            }
-        }
-        else {
-            alert(CONNECTION_IDLE);
-        }
+  const loadConversation = (groupId) => {
+    // Retrieve messages from localStorage for the selected conversation
+    const storedMessages = groupId;
+    const retrievedMessages = storedMessages ? storedMessages.conversation : [];
+
+
+    //need to sort the messages here by datetime
+    
+    setChatMessages(retrievedMessages);
+
+    // Update the recipients with the current conversation's participants
+    const conversation = storedMessages;
+    setRecipients(conversation.groupName.split(','));
+    setSelectedConversation(groupId);
+    setCurrGroup(conversation.groupUID);
+  };
+
+  const startNewConversation = () => {
+    // Clear the chat messages and recipients for a new conversation
+    setChatMessages([]);
+    setRecipients([]);
+  
+    // Create an empty chat group
+    const emptyGroup = {
+      groupName: '',
+      conversation: [],
+    };
+  
+    // Set the empty chat group as the selected conversation
+    setSelectedConversation(emptyGroup);
+  };
+  
+
+  const sendMessage = async (groupId, message, toUser) => {
+    console.log(currGroup);
+
+    if (!connection) return;
+    try {
+      const messagePayload = {
+        conId: cookies.get(TYPES.CONNECTION_ID),
+        token: cookies.get('token'),
+        groupId: currGroup,
+        message: message,
+      };
+      await connection.invoke(
+        TYPES.SEND_PRIVATE_MESSAGE,
+        JSON.stringify(messagePayload)
+      );
+    } catch (e) {
+      console.error(TYPES.SEND_MESSAGE_FAILED, e.message);
     }
+  };
 
-    const sendInvite = async (groupId, inviteUser) => {
-        //Need to get groupID from original retrieveGroupCall
+  const inviteUser = async (groupName, userEmail) => {
+    if (!connection) return;
 
-
-        const groupModificationRequest = {
-            conID: cookie.get(CONNECTION_ID),
-            token: cookie.get(TOKEN),
-            userName: inviteUser,
-            groupId: localStorage.getItem(groupId),
-            modification: GROUP_MODIFICATION_TYPES.INVITE
-        }
-
-        if (connection.connectionStarted) {
-            try {
-                await connection.send(INVITE_TO_GROUP, JSON.stringify(groupModificationRequest));
-            }
-            catch(e) {
-                console.log(e);
-            }
-        }
-        else {
-            alert(CONNECTION_IDLE);
-        }
-
+    try {
+      const invitePayload = {
+        groupName: groupName,
+        userEmail: userEmail,
+        sender: '',
+      };
+      await connection.invoke(
+        TYPES.INVITE_USER,
+        JSON.stringify(invitePayload)
+      );
+    } catch (e) {
+      console.error(TYPES.INVITE_USER_FAILED, e.message);
     }
+  };
 
-    const sendMessage = async (user, message) => {
-        const chatMessage = {
-            user: user,
-            message: message
-        };
-
-        if (connection.connectionStarted) {
-            try {
-                await connection.send(SEND_CHAT_MESSAGE, chatMessage);
-            }
-            catch(e) {
-                console.log(e);
-            }
-        }
-        else {
-            alert(CONNECTION_IDLE);
-        }
-    }
-
-    return (
-        <div>
-            <ChatInput sendMessage={sendNewMessage} />
-            <ChatInvite sendInvite={sendInvite} />
-            <hr />
-            <ChatBox chat={chat}/>
-        </div>
-    );
+  return (
+    <div>
+      <div>
+        <h3>Conversations:</h3>
+        <ul>
+          {localStorage.length > 0 &&
+            Object.entries(localStorage).map(([groupName, groupId]) => (
+              <li key={groupId}>
+                <button onClick={() => loadConversation(JSON.parse(groupId))}>
+                  {groupName}
+                </button>
+              </li>
+            ))}
+        </ul>
+        <button onClick={startNewConversation}>Start New Chat</button>
+      </div>
+      <div>
+        <ChatBox chatMessages={chatMessages} />
+        {selectedConversation && ( // Conditionally render ChatInput when selectedConversation is not null
+          <ChatInput recipients={recipients} sendMessage={sendMessage} groupUID={currGroup}/>
+        )}
+      </div>
+      <ChatInvite inviteUser={inviteUser} />
+    </div>
+  );
 };
 
 export default Chat;

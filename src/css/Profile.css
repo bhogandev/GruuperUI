@@ -1,0 +1,47 @@
+/* Profile container */
+.profile-container {
+    margin-top: 20px;
+  }
+  
+  /* Profile header */
+  .profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #ccc;
+    margin-right: 20px;
+  }
+  
+  .profile-info {
+    flex: 1;
+  }
+  
+  .profile-username {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .profile-bio {
+    font-size: 16px;
+  }
+  
+  /* Profile actions */
+  .profile-actions {
+    margin-top: 20px;
+  }
+  
+  .profile-actions button {
+    margin-right: 10px;
+  }
+  
+  /* Post list */
+  .post-list {
+    margin-top: 20px;
+  }
+  

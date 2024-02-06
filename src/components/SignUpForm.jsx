@@ -9,6 +9,7 @@ import {DEFAULT_ERROR } from '../middleware/errors';
 import {SUCCESS} from '../middleware/types';
 import { Form, NavItem } from 'reactstrap/lib';
 import "react-datepicker/dist/react-datepicker.css";
+import '../css/Landing.css';
 
 class SignUpForm extends React.Component {
     constructor(props){
@@ -78,7 +79,7 @@ class SignUpForm extends React.Component {
     render(){
         return (
             <div>
-                <Form>
+                <Form className='signup-form'>
                 <FormGroup>
                         <div id="errors" style={{ color: "red" }}>
                         </div>
@@ -101,7 +102,10 @@ class SignUpForm extends React.Component {
                     <Label for="ref">Reference Code</Label>
                     <Input type="text" name="ref" id="ref" placeholder="Reference Code" value={this.state.ref ? this.state.ref : ''} onChange={(val) => this.setPropVal('ref', val.target.value)}/>
                 </FormGroup>
-                        <Button style={{ textAlign: "center" }} onClick={() => this.SignUp()}>Sign Up</Button>
+                <div className="text-center">
+  <Button onClick={() => this.SignUp()}>Sign Up</Button>
+</div>
+
                 </Form>
             </div>
         )
