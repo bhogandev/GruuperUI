@@ -2,10 +2,9 @@
 import { useState } from 'react';
 import Spinner  from '../components/Spinner';
 import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
-import Auth from '../middleware/Auth';
 import { useDispatch } from 'react-redux';
-import { logIn, loginUser, provideErrors } from '../app/features/AuthSlice';
-import { PAYLOAD, RESPONSE_ERRORS, SUCCESS_CODE } from '../middleware/types';
+import { logIn, loginUser} from '../app/features/AuthSlice';
+import { PAYLOAD,SUCCESS_CODE } from '../middleware/types';
 import { DEFAULT_ERROR } from '../middleware/errors';
 
 export default function LoginForm(props) {
@@ -26,9 +25,9 @@ export default function LoginForm(props) {
 
         console.log(result.payload);
 
-        if(result.payload != undefined)
+        if(result.payload !== undefined)
         {
-        if(result.payload.responseCode == SUCCESS_CODE)
+        if(result.payload.responseCode === SUCCESS_CODE)
         {
             props.history.push('./home');
         }else if(result.payload.responseCode !== SUCCESS_CODE && result.payload[PAYLOAD].ResponseErrors != null){

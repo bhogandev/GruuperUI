@@ -96,6 +96,9 @@ const Chat = () => {
     const storedMessages = groupId;
     const retrievedMessages = storedMessages ? storedMessages.conversation : [];
 
+
+    //need to sort the messages here by datetime
+    
     setChatMessages(retrievedMessages);
 
     // Update the recipients with the current conversation's participants

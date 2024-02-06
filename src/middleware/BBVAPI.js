@@ -4,8 +4,8 @@ import {determineDevice, browser} from '../js/browserMethods';
 import {SUCCESS, FAILURE, CONFLICT, CONFLICT_CODE, RESPONSE_ERRORS, SUCCESS_CODE, BADREQUEST_CODE} from './types';
 import {DEFAULT_ERROR} from './errors';
 import {APIBASE} from './Constants';
-import { useDispatch } from 'react-redux';
-import { setCredentials } from '../app/features/AuthSlice';
+
+
 
 
     //Summary - Log in user to application

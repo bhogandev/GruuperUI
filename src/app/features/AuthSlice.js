@@ -100,6 +100,7 @@ const auth = createSlice ({
                 
                 case BADREQUEST_CODE:
                     state.error = [...action.payload[PAYLOAD].ResponseErrors];
+                    console.log(...action.payload[PAYLOAD]);
                     break;
                 
                 default:
