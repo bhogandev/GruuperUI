@@ -8,39 +8,40 @@ import { BADREQUEST_CODE, CONFLICT_CODE, PAYLOAD, REFRESH_TOKEN, RESPONSE_ERRORS
 const cookies = new Cookies();
 
 export const loginUser = createAsyncThunk(
-  "auth/login",
-  async (payload, { rejectWithValue }) => {
-    try {
-      // Make request to authentication API here
-      const response = login(payload.email, payload.password);
-      // Return JSON object containing token and refresh token
-      return response
-    } catch (error) {
-      // Handle any errors that may occur during the request
-      return rejectWithValue(error);
+    "auth/login",
+    async (payload, { rejectWithValue }) => {
+      try {
+        // Make request to authentication API here
+        const response = login(payload.email, payload.password);
+        // Return JSON object containing token and refresh token
+        return response
+      } catch (error) {
+        // Handle any errors that may occur during the request
+        return rejectWithValue(error);
+      }
     }
-  }
-);
-
-export const logUserOut = createAsyncThunk(
-    "auth/logout",
-    async (payload ,{rejectWithValue}) => {
-        try {
-            const response = await logout(payload.token);
-
-            return response
-        }catch(error){
-
-            return rejectWithValue(error);
-        }
-    }
-);
+  );
+  
+  export const logUserOut = createAsyncThunk(
+      "auth/logout",
+      async (payload ,{rejectWithValue}) => {
+          try {
+              const response = await logout(payload.token);
+  
+              return response
+          }catch(error){
+  
+              return rejectWithValue(error);
+          }
+      }
+  );
 
 const initialState = { 
     token: cookies.get(TOKEN),
     refreshToken: cookies.get(REFRESH_TOKEN),
     loading: false,
-    error: null
+    error: null,
+    isAuthenticated: false,
  }
 
 const auth = createSlice ({
@@ -87,10 +88,12 @@ const auth = createSlice ({
                     state.token = action.payload[PAYLOAD].Token;
                     state.refreshToken = action.payload[PAYLOAD].RefreshToken;
                     state.error = null;
+                    state.isAuthenticated = true;
 
                     let cookies = new Cookies();
                     cookies.set(TOKEN, action.payload[PAYLOAD].Token);
                     cookies.set(REFRESH_TOKEN, action.payload[PAYLOAD].RefreshToken);
+
                     break;
                 
                 case CONFLICT_CODE:          
@@ -174,6 +177,6 @@ export const provideUserToken = (state) =>   {
     return ({ "token": state.auth.token,
     "refreshToken": state.auth.refreshToken
 })
-}
+} 
 
 //export const provideUserRefreshToken = (state) => state.refreshToken;

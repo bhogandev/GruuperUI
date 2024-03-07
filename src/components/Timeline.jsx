@@ -5,40 +5,25 @@ import Cookie from 'universal-cookie';
 import Post from './Post';
 import CreatePostForm from './CreatePostForm';
 import { Container } from 'react-bootstrap'
-import BBVAPI from '../middleware/BBVAPI';
 import { REFRESH_TOKEN, RESPONSE_BODY, RESPONSE_MESSAGE, SUCCESS, TOKEN, USERNAME_KEY, USER_TOKEN } from '../middleware/types';
-import { useSelector } from 'react-redux';
-import { DEFAULT_ERROR } from '../middleware/errors';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchTimelineData } from '../app/features/TimeLineSlice';
 
 export default function Timeline({ token, rtoken, userName }) {
-    const [posts, setPosts] = useState([]);
+    const posts = useSelector((state) => state.timeline.posts);
     const [updateTimeline, setUpdateTimeline] = useState(false);
-    const [postPage, setPostPage] = useState(1);
+    const postPage = useSelector((state) => state.timeline.page);
     const [errors, setErrors] = useState('');
 
     const isInitialMount = useRef(true);
 
+    const dispatch = useDispatch();
+
     const GetTL = useCallback(async () => {
-        let cookie = new Cookie();
 
         try {
-            const response = await getUserTimeline(token, rtoken, postPage);
-
-            if (response[RESPONSE_MESSAGE] !== SUCCESS) {
-                //return error to timeline
-                setErrors(response[0]['DEFAULT_ERROR'].Description);
-            } else {
-                const jsonResponse = JSON.parse(response[RESPONSE_BODY]);
-                const postList = jsonResponse.map(post => {
-                    const parsedCExt = post.CommentsExt;
-                    const isOwner = post.Username === userName;
-                   
-                    return (
-                        <Post key={post.PostId} PostId={post.PostId} Username={post.Username} CreateDateTime={post.CreateDateTime} Body={post.Body} Attachments={post.Attachments} Likes={post.Likes} IsLiked={post.LikeStatus} Comments={post.Comments} CExt={JSON.parse(post.CommentsExt)} isOwner={isOwner} GetTL={GetTL} />
-                    )
-                })
-                setPosts(postList);
-            }
+            dispatch(fetchTimelineData(token, rtoken, postPage + 1, userName));
+            
         } catch (ex) {
             console.log(ex);
         }
@@ -46,6 +31,7 @@ export default function Timeline({ token, rtoken, userName }) {
 
     useEffect(() => {
         if (isInitialMount.current) {
+            console.log('here');
             GetTL();
             isInitialMount.current = false;
         } else {

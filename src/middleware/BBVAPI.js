@@ -1,12 +1,8 @@
-﻿import axios from 'axios';
-import Cookies from 'universal-cookie';
+﻿import Cookies from 'universal-cookie';
 import {determineDevice, browser} from '../js/browserMethods';
 import {SUCCESS, FAILURE, CONFLICT, CONFLICT_CODE, RESPONSE_ERRORS, SUCCESS_CODE, BADREQUEST_CODE} from './types';
 import {DEFAULT_ERROR} from './errors';
 import {APIBASE} from './Constants';
-
-
-
 
     //Summary - Log in user to application
     async function login(e, p) {
@@ -241,7 +237,8 @@ import {APIBASE} from './Constants';
         }
         
     }
-//TIMELINE CALLS
+
+/************TIMELINE CALLS***************/
 
     //Summary - Get users timemline
     async function getUserTimeline(t, rt, page) {
@@ -273,8 +270,8 @@ import {APIBASE} from './Constants';
                 var result = await res.json();
                 return result;
 
-            } else if (res && res.status == CONFLICT_CODE) {
-            var result = await res;
+            } else if (res && res.status === CONFLICT_CODE) {
+                var result = await res;
 
             //find a way to return errrors and loading state
             //this.setState({ errors: result["ResponseErrors"], loading: false });
@@ -347,6 +344,7 @@ import {APIBASE} from './Constants';
         }
     }
 
+    //Summary - Get User Profile Info
     async function getUserInfo(t, rt)
     {
         const cookies = new Cookies();
@@ -413,6 +411,7 @@ import {APIBASE} from './Constants';
         }
     }
 
+    //Summary - Retrieve Users Friends List
     async function getFriendList(token, userId) {
         const cookies = new Cookies();
         const headers = {
@@ -445,7 +444,6 @@ import {APIBASE} from './Constants';
         }
     }
     
-
     //Summary - Get a user's profile information to render profile path
     async function getProfile(t, rt, username){
         
@@ -590,7 +588,7 @@ import {APIBASE} from './Constants';
         }
     }
 
-//POST API CALLS
+/****************POST API CALLS***************/
 
     //Summary - Interact with user post likes (like or unlike post)
     async function interactWithPostLikes(t, parentId, IsLiked)

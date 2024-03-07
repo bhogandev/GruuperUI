@@ -5,6 +5,8 @@ import { CONFLICT_CODE, REFRESH_TOKEN, RESPONSE_ERRORS, TOKEN } from '../middlew
 import { DEFAULT_ERROR } from '../middleware/errors';
 import { Row, Col } from 'react-bootstrap';
 import { APIBASE } from '../middleware/Constants';
+import { useDispatch } from 'react-redux';
+import { addPost } from '../app/features/TimeLineSlice';
 
 const CreatePostForm = (props) => {
   const [post, setPost] = useState('');
@@ -12,6 +14,8 @@ const CreatePostForm = (props) => {
   const [videos, setVideos] = useState([]);
   const [errors, setErrors] = useState([]);
   const [btnDisabled, setBtnDisable] = useState(false);
+
+  const dispatch = useDispatch();
 
   async function uploadPost() {
     const cookies = new Cookies();
@@ -37,14 +41,12 @@ const CreatePostForm = (props) => {
 
       if (res && res.ok) {
         setPost('');
+        dispatch(addPost(post));
         props.tlUpdate();
-      } else if (res && res.status == CONFLICT_CODE) {
+      } else if (res && res.status === CONFLICT_CODE) {
         var result = await JSON.parse(await res.json());
         setErrors(result[RESPONSE_ERRORS]);
       } else {
-        var defaultError = [{
-          DEFAULT_ERROR
-        }];
         setErrors(DEFAULT_ERROR);
       }
     } catch (exception) {
